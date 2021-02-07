@@ -1,6 +1,7 @@
 use crate::structures::interaction_replies::{
     InteractionReply, InteractionReplyData, InteractionReplyKind,
 };
+use std::collections::HashMap;
 use std::time::Instant;
 
 pub async fn ping(
@@ -10,7 +11,7 @@ pub async fn ping(
     interaction_token: String,
 ) -> anyhow::Result<()> {
     let original_time = Instant::now();
-    let mut reply = InteractionReply {
+    let reply = InteractionReply {
         kind: InteractionReplyKind::CHANNEL_MESSAGE_WITH_SOURCE.0,
         data: InteractionReplyData {
             content: "🏓 Pinging...".to_string(),
@@ -32,11 +33,12 @@ pub async fn ping(
             "https://discord.com/api/webhooks/{}/{}/messages/@original",
             application_id, interaction_token
         );
-        reply.data = InteractionReplyData {
-            content: format!("🏓 Pong!\nLatency is: {}ms.", latency.as_millis()),
-            embeds: None,
-        };
-        let response = client.patch(&patch_url).json(&reply).send().await?;
+        let mut reply_data = HashMap::new();
+        reply_data.insert(
+            "content",
+            format!("🏓 Pong!\nLatency is: {}ms.", latency.as_millis()),
+        );
+        let response = client.patch(&patch_url).json(&reply_data).send().await?;
 
         if let Err(err) = response.error_for_status() {
             log::error!(

@@ -1,4 +1,5 @@
-use crate::commands::about::about;
+use crate::commands::information::about::about;
+use crate::commands::information::valentine::valentine;
 use crate::commands::utilities::avatar::avatar;
 use crate::commands::utilities::enlarge::enlarge;
 use crate::commands::utilities::ping::ping;
@@ -76,6 +77,9 @@ impl EventHandler for Handler {
                         .await
                         .expect("Failed to respond to /ping command.");
                 }
+                "valentine" => valentine(client, response_url, &interaction.member)
+                    .await
+                    .expect("Failed to respond to /valentine command."),
                 _ => (),
             }
         }

@@ -1,2 +1,2 @@
-pub mod about;
+pub mod information;
 pub mod utilities;
