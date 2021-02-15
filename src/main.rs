@@ -1,3 +1,4 @@
+use crate::event_handler::Handler;
 use env_logger::Builder;
 use log::LevelFilter;
 use serenity::client::bridge::gateway::GatewayIntents;
@@ -5,7 +6,10 @@ use serenity::client::ClientBuilder;
 use serenity::framework::StandardFramework;
 use serenity::http::Http;
 use std::collections::HashSet;
-use torahiko::event_handler::Handler;
+
+mod commands;
+mod event_handler;
+mod structures;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

@@ -1,13 +1,12 @@
-use crate::structures::embed::{EmbedAuthor, EmbedField, EmbedFooter, EmbedObject, EmbedThumbnail};
-use crate::structures::interaction_replies::{
-    InteractionReply, InteractionReplyData, InteractionReplyKind,
+use crate::structures::{
+    EmbedAuthor, EmbedField, EmbedFooter, EmbedObject, EmbedThumbnail, InteractionReply,
+    InteractionReplyData, InteractionReplyKind, Valentine,
 };
-use crate::structures::valentine::Valentine;
 use once_cell::sync::OnceCell;
 use rand::prelude::*;
 use serenity::model::prelude::Member;
 
-const VALENTINE_FILE_PATH: &str = "./static/valentines.json";
+const VALENTINE_FILE_PATH: &str = "./assets/valentines.json";
 static VALENTINES: OnceCell<Vec<Valentine>> = OnceCell::new();
 
 pub async fn valentine(

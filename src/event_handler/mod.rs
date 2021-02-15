@@ -1,8 +1,4 @@
-use crate::commands::information::about::about;
-use crate::commands::information::valentine::valentine;
-use crate::commands::utilities::avatar::avatar;
-use crate::commands::utilities::enlarge::enlarge;
-use crate::commands::utilities::ping::ping;
+use crate::commands::*;
 use once_cell::sync::OnceCell;
 use serenity::model::prelude::Interaction;
 use serenity::{async_trait, prelude::*};
@@ -55,6 +51,11 @@ impl EventHandler for Handler {
                             .expect("Failed to respond to /avatar command.");
                     }
                 }
+                "cvt" => {
+                    cvt(client, response_url, &data.options)
+                        .await
+                        .expect("Failed to respond to /cvt command.");
+                }
                 "enlarge" => {
                     let app_info = ctx
                         .http
@@ -66,6 +67,16 @@ impl EventHandler for Handler {
                             .await
                             .expect("Failed to respond to /avatar command.");
                     }
+                }
+                "pick" => {
+                    let app_info = ctx
+                        .http
+                        .get_current_application_info()
+                        .await
+                        .expect("Failed to get application info.");
+                    pick(client, response_url, &data.options, app_info.id.0, token)
+                        .await
+                        .expect("Failed to respond to /pick command.");
                 }
                 "ping" => {
                     let app_info = ctx

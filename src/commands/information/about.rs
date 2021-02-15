@@ -1,6 +1,6 @@
-use crate::structures::embed::{EmbedAuthor, EmbedFooter, EmbedObject, EmbedThumbnail};
-use crate::structures::interaction_replies::{
-    InteractionReply, InteractionReplyData, InteractionReplyKind,
+use crate::structures::{
+    EmbedAuthor, EmbedFooter, EmbedObject, EmbedThumbnail, InteractionReply, InteractionReplyData,
+    InteractionReplyKind,
 };
 
 pub async fn about(client: &reqwest::Client, url: String) -> anyhow::Result<()> {
@@ -47,13 +47,7 @@ pub async fn about(client: &reqwest::Client, url: String) -> anyhow::Result<()> 
     };
 
     let response = client.post(&url).json(&reply).send().await?;
-
-    if let Err(err) = response.error_for_status() {
-        log::error!(
-            "Error when responding to slash command: {}",
-            err.to_string()
-        );
-    }
+    response.error_for_status()?;
 
     Ok(())
 }

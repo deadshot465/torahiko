@@ -1,6 +1,4 @@
-use crate::structures::interaction_replies::{
-    InteractionReply, InteractionReplyData, InteractionReplyKind,
-};
+use crate::structures::{InteractionReply, InteractionReplyData, InteractionReplyKind};
 use once_cell::sync::OnceCell;
 use regex::Regex;
 use serenity::model::prelude::ApplicationCommandInteractionDataOption;

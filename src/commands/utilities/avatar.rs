@@ -1,6 +1,5 @@
-use crate::structures::embed::{EmbedImage, EmbedObject};
-use crate::structures::interaction_replies::{
-    InteractionReply, InteractionReplyData, InteractionReplyKind,
+use crate::structures::{
+    EmbedImage, EmbedObject, InteractionReply, InteractionReplyData, InteractionReplyKind,
 };
 use serenity::model::prelude::ApplicationCommandInteractionDataOption;
 use serenity::prelude::Context;
@@ -21,7 +20,7 @@ pub async fn avatar(
     };
     if let Some(ref value) = option_data.value {
         let user_id = value.as_str().unwrap_or_default().parse::<u64>()?;
-        if let Some(member) = ctx.cache.member(guild_id, user_id).await {
+        if let Ok(member) = ctx.http.get_member(guild_id, user_id).await {
             if let Some(avatar_url) = member.user.avatar_url() {
                 let member_name = member.nick.unwrap_or(member.user.name);
                 let description = format!(
@@ -66,13 +65,7 @@ pub async fn avatar(
         }
 
         let response = client.post(&url).json(&reply).send().await?;
-
-        if let Err(err) = response.error_for_status() {
-            log::error!(
-                "Error when responding to slash command: {}",
-                err.to_string()
-            );
-        }
+        response.error_for_status()?;
     }
 
     Ok(())

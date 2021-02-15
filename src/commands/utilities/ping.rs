@@ -1,6 +1,4 @@
-use crate::structures::interaction_replies::{
-    InteractionReply, InteractionReplyData, InteractionReplyKind,
-};
+use crate::structures::{InteractionReply, InteractionReplyData, InteractionReplyKind};
 use std::collections::HashMap;
 use std::time::Instant;
 
@@ -20,33 +18,21 @@ pub async fn ping(
     };
 
     let response = client.post(&url).json(&reply).send().await?;
+    response.error_for_status()?;
 
-    if let Err(err) = response.error_for_status() {
-        log::error!(
-            "Error when responding to slash command: {}",
-            err.to_string()
-        );
-    } else {
-        let current_time = Instant::now();
-        let latency = current_time.duration_since(original_time);
-        let patch_url = format!(
-            "https://discord.com/api/webhooks/{}/{}/messages/@original",
-            application_id, interaction_token
-        );
-        let mut reply_data = HashMap::new();
-        reply_data.insert(
-            "content",
-            format!("🏓 Pong!\nLatency is: {}ms.", latency.as_millis()),
-        );
-        let response = client.patch(&patch_url).json(&reply_data).send().await?;
-
-        if let Err(err) = response.error_for_status() {
-            log::error!(
-                "Error when responding to slash command: {}",
-                err.to_string()
-            );
-        }
-    }
+    let current_time = Instant::now();
+    let latency = current_time.duration_since(original_time);
+    let patch_url = format!(
+        "https://discord.com/api/webhooks/{}/{}/messages/@original",
+        application_id, interaction_token
+    );
+    let mut reply_data = HashMap::new();
+    reply_data.insert(
+        "content",
+        format!("🏓 Pong!\nLatency is: {}ms.", latency.as_millis()),
+    );
+    let response = client.patch(&patch_url).json(&reply_data).send().await?;
+    response.error_for_status()?;
 
     Ok(())
 }
