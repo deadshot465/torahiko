@@ -1,10 +1,15 @@
 use crate::commands::*;
 use once_cell::sync::OnceCell;
-use serenity::model::prelude::Interaction;
+use rand::prelude::*;
+use serenity::model::prelude::{Activity, Interaction, Ready};
 use serenity::{async_trait, prelude::*};
+use tokio::time::Duration;
+
+const PRESENCES_PATH: &str = "./assets/presences.json";
 
 static HTTP_CLIENT: OnceCell<reqwest::Client> = OnceCell::new();
 static IS_HTTP_CLIENT_INITIALIZED: OnceCell<Mutex<bool>> = OnceCell::new();
+static PRESENCES: OnceCell<Vec<String>> = OnceCell::new();
 
 pub struct Handler;
 
@@ -26,6 +31,30 @@ impl Handler {
 
 #[async_trait]
 impl EventHandler for Handler {
+    async fn ready(&self, ctx: Context, _data_about_bot: Ready) {
+        let presences = PRESENCES.get_or_init(|| {
+            let raw_data =
+                std::fs::read(PRESENCES_PATH).expect("Failed to read presences from JSON.");
+            serde_json::from_slice(&raw_data).expect("Failed to deserialize from JSON.")
+        });
+        let presence = {
+            let mut rng = thread_rng();
+            presences.choose(&mut rng).cloned().unwrap_or_default()
+        };
+        ctx.set_activity(Activity::playing(&presence)).await;
+        tokio::spawn(async move {
+            let presences = presences;
+            loop {
+                tokio::time::sleep(Duration::from_secs(3600)).await;
+                let presence = {
+                    let mut rng = thread_rng();
+                    presences.choose(&mut rng).cloned().unwrap_or_default()
+                };
+                ctx.set_activity(Activity::playing(&presence)).await;
+            }
+        });
+    }
+
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         let token = interaction.token.clone();
         let id = interaction.id.0;
