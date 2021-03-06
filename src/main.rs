@@ -9,6 +9,7 @@ use std::collections::HashSet;
 
 mod commands;
 mod event_handler;
+mod shared;
 mod structures;
 
 #[tokio::main]
@@ -18,7 +19,7 @@ async fn main() -> anyhow::Result<()> {
         .filter(None, LevelFilter::Warn)
         .default_format()
         .init();
-    let token = dotenv::var("TOKEN")?;
+    let token = std::env::var("TOKEN")?;
     let http = Http::new_with_token(&token);
     let app_info = http.get_current_application_info().await?;
     let mut owners = HashSet::new();

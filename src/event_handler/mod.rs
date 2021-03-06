@@ -97,6 +97,11 @@ impl EventHandler for Handler {
                             .expect("Failed to respond to /avatar command.");
                     }
                 }
+                "image" => {
+                    image(client, response_url, &data.options, &interaction.member)
+                        .await
+                        .expect("Failed to respond to /image command.");
+                }
                 "pick" => {
                     let app_info = ctx
                         .http

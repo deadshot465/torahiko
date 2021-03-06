@@ -16,6 +16,7 @@ pub struct InteractionReplyData {
 
 pub struct InteractionReplyKind(pub(crate) u8);
 
+#[allow(dead_code)]
 impl InteractionReplyKind {
     pub const PONG: Self = Self(1);
     pub const ACKNOWLEDGE: Self = Self(2);
