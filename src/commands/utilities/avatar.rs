@@ -1,5 +1,5 @@
 use crate::structures::{
-    EmbedImage, EmbedObject, InteractionReply, InteractionReplyData, InteractionReplyKind,
+    EmbedObject, InteractionReply, InteractionReplyData, InteractionReplyKind,
 };
 use serenity::model::prelude::ApplicationCommandInteractionDataOption;
 use serenity::prelude::Context;
@@ -29,27 +29,15 @@ pub async fn avatar(
                     avatar_url.clone()
                 );
 
+                let embed = EmbedObject::new()
+                    .title(&member_name)
+                    .description(&description)
+                    .color(0xdfd16c)
+                    .image(&avatar_url, None, None, None);
+
                 reply.data = InteractionReplyData {
                     content: String::new(),
-                    embeds: Some(vec![EmbedObject {
-                        title: Some(member_name),
-                        kind: None,
-                        description: Some(description),
-                        url: None,
-                        color: Some(0xdfd16c),
-                        footer: None,
-                        image: Some(EmbedImage {
-                            url: Some(avatar_url),
-                            proxy_url: None,
-                            height: None,
-                            width: None,
-                        }),
-                        thumbnail: None,
-                        video: None,
-                        provider: None,
-                        author: None,
-                        fields: None,
-                    }]),
+                    embeds: Some(vec![embed]),
                 };
             } else {
                 reply.data = InteractionReplyData {

@@ -1,6 +1,5 @@
 use crate::structures::{
-    EmbedAuthor, EmbedField, EmbedFooter, EmbedObject, EmbedThumbnail, InteractionReply,
-    InteractionReplyData, InteractionReplyKind, Valentine,
+    EmbedObject, InteractionReply, InteractionReplyData, InteractionReplyKind, Valentine,
 };
 use once_cell::sync::OnceCell;
 use rand::prelude::*;
@@ -24,73 +23,32 @@ pub async fn valentine(
             .expect("Failed to choose from valentines.")
     };
 
-    let author = EmbedAuthor {
-        name: Some(member.nick.clone().unwrap_or(member.user.name.clone())),
-        url: None,
-        icon_url: member.user.avatar_url(),
-        proxy_icon_url: None,
-    };
-
     let title = format!("Your valentine is {}", valentine.name.clone());
     let description = valentine.description.clone();
     let color = u32::from_str_radix(&valentine.color, 16)?;
 
-    let thumbnail = EmbedThumbnail {
-        url: Some(valentine.thumbnail_link.clone()),
-        proxy_url: None,
-        height: None,
-        width: None,
-    };
-
-    let fields = vec![
-        EmbedField {
-            name: "Age".to_string(),
-            value: valentine.age.to_string(),
-            inline: Some(true),
-        },
-        EmbedField {
-            name: "Birthday".to_string(),
-            value: valentine.birthday.clone(),
-            inline: Some(true),
-        },
-        EmbedField {
-            name: "Animal".to_string(),
-            value: valentine.animal.clone(),
-            inline: Some(true),
-        },
-        EmbedField {
-            name: "Zodiac Sign".to_string(),
-            value: valentine.zodiac.clone(),
-            inline: Some(true),
-        },
-    ];
-
     let first_name = get_first_name(&valentine.name);
+    let valentine_age = valentine.age.to_string();
+    let footer_text = format!("{} is adorable and his route is very nice, too. Maybe it's time to give it a try if you don't like his route.", first_name);
+    let author_name = member.nick.clone().unwrap_or(member.user.name.clone());
 
-    let footer = EmbedFooter {
-        text: format!("{} is adorable and his route is very nice, too. Maybe it's time to give it a try if you don't like his route.", first_name),
-        icon_url: None,
-        proxy_icon_url: None,
-    };
+    let embed = EmbedObject::new()
+        .title(&title)
+        .description(&description)
+        .color(color)
+        .footer(&footer_text, None, None)
+        .thumbnail(&valentine.thumbnail_link, None, None, None)
+        .author(&author_name, member.user.avatar_url(), None, None)
+        .field("Age", &valentine_age, true)
+        .field("Birthday", &valentine.birthday, true)
+        .field("Animal", &valentine.animal, true)
+        .field("Zodiac Sign", &valentine.zodiac, true);
 
     let reply = InteractionReply {
         kind: InteractionReplyKind::CHANNEL_MESSAGE_WITH_SOURCE.0,
         data: InteractionReplyData {
             content: String::new(),
-            embeds: Some(vec![EmbedObject {
-                title: Some(title),
-                kind: None,
-                description: Some(description),
-                url: None,
-                color: Some(color),
-                footer: Some(footer),
-                image: None,
-                thumbnail: Some(thumbnail),
-                video: None,
-                provider: None,
-                author: Some(author),
-                fields: Some(fields),
-            }]),
+            embeds: Some(vec![embed]),
         },
     };
 
