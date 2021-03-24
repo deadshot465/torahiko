@@ -3,7 +3,7 @@ use crate::structures::{
 };
 
 pub async fn about(client: &reqwest::Client, url: String) -> anyhow::Result<()> {
-    let description = "Ooshima Torahiko in The Church of Minamoto Kou.\nTorahiko was inspired by the visual novel Homecoming ~Morenatsu Revisited~.\n[Official website](https://stormsingerstudios.com/homecoming)\n[Official Discord server](https://discord.gg/WTjM3S5)\nTorahiko version 0.1 was made and developed by:\n**Tetsuki Syu#1250**"
+    let description = "Ooshima Torahiko in the Land of Cute Bois.\nTorahiko was inspired by the visual novel Homecoming ~Morenatsu Revisited~.\n[Official website](https://stormsingerstudios.com/homecoming)\n[Official Discord server](https://discord.gg/WTjM3S5)\nTorahiko version 0.3 was made and developed by:\n**Tetsuki Syu#1250**"
         .to_string();
 
     let embed = EmbedObject::new()

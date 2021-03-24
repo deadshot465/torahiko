@@ -64,6 +64,12 @@ impl EventHandler for Handler {
             id,
             token.clone()
         );
+        let app_info = ctx
+            .http
+            .get_current_application_info()
+            .await
+            .expect("Failed to get application info.");
+
         if let Some(ref data) = interaction.data {
             Self::initialize_http_client()
                 .await
@@ -86,16 +92,23 @@ impl EventHandler for Handler {
                         .expect("Failed to respond to /cvt command.");
                 }
                 "enlarge" => {
-                    let app_info = ctx
-                        .http
-                        .get_current_application_info()
-                        .await
-                        .expect("Failed to get application info.");
                     if let Some(option_data) = data.options.get(0) {
                         enlarge(client, response_url, option_data, app_info.id.0, token)
                             .await
                             .expect("Failed to respond to /avatar command.");
                     }
+                }
+                "games" => {
+                    games(
+                        client,
+                        response_url,
+                        &data.options,
+                        &interaction.member,
+                        app_info.id.0,
+                        token,
+                    )
+                    .await
+                    .expect("Failed to respond to /games command.");
                 }
                 "image" => {
                     image(client, response_url, &data.options, &interaction.member)
@@ -103,21 +116,11 @@ impl EventHandler for Handler {
                         .expect("Failed to respond to /image command.");
                 }
                 "pick" => {
-                    let app_info = ctx
-                        .http
-                        .get_current_application_info()
-                        .await
-                        .expect("Failed to get application info.");
                     pick(client, response_url, &data.options, app_info.id.0, token)
                         .await
                         .expect("Failed to respond to /pick command.");
                 }
                 "ping" => {
-                    let app_info = ctx
-                        .http
-                        .get_current_application_info()
-                        .await
-                        .expect("Failed to get application info.");
                     ping(client, response_url, app_info.id.0, token)
                         .await
                         .expect("Failed to respond to /ping command.");
