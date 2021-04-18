@@ -1,8 +1,10 @@
 mod cvt;
 mod embed;
+mod game;
 mod interaction_replies;
 mod valentine;
 pub use cvt::*;
 pub use embed::*;
+pub use game::*;
 pub use interaction_replies::*;
 pub use valentine::*;

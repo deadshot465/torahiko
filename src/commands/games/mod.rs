@@ -1,7 +1,12 @@
 use crate::structures::{InteractionReply, InteractionReplyData, InteractionReplyKind};
+use dashmap::DashMap;
+use once_cell::sync::OnceCell;
 use serenity::{model::prelude::*, prelude::*};
+use std::sync::Arc;
 
 mod hangman;
+
+pub static ONGOING_GAMES: OnceCell<Arc<DashMap<u64, u64>>> = OnceCell::new();
 
 pub async fn games(
     client: &reqwest::Client,
@@ -10,6 +15,7 @@ pub async fn games(
     member: &Member,
     application_id: u64,
     interaction_token: String,
+    channel_id: u64,
 ) -> anyhow::Result<()> {
     let reply = InteractionReply {
         kind: InteractionReplyKind::CHANNEL_MESSAGE_WITH_SOURCE.0,
@@ -31,6 +37,7 @@ pub async fn games(
                     application_id,
                     interaction_token,
                     reply,
+                    channel_id,
                 )
                 .await?
             }

@@ -69,6 +69,7 @@ impl EventHandler for Handler {
             .get_current_application_info()
             .await
             .expect("Failed to get application info.");
+        let channel_id = interaction.channel_id.0;
 
         if let Some(ref data) = interaction.data {
             Self::initialize_http_client()
@@ -106,6 +107,7 @@ impl EventHandler for Handler {
                         &interaction.member,
                         app_info.id.0,
                         token,
+                        channel_id,
                     )
                     .await
                     .expect("Failed to respond to /games command.");
