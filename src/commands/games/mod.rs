@@ -6,7 +6,8 @@ use std::sync::Arc;
 
 mod hangman;
 
-pub static ONGOING_GAMES: OnceCell<Arc<DashMap<u64, u64>>> = OnceCell::new();
+/// K: Channel ID, V: A vector of user IDs who are having games in that channel.
+pub static ONGOING_GAMES: OnceCell<Arc<DashMap<u64, Vec<u64>>>> = OnceCell::new();
 
 pub async fn games(
     client: &reqwest::Client,
