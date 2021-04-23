@@ -31,7 +31,25 @@ pub struct GameProgressResponse {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum GameProgressRequest {
-    Quiz { user_id: u64, message: String },
-    Hangman { user_id: u64, message: String },
-    Tictactoe { user_id: u64, message: String },
+    Quiz {
+        user_id: u64,
+        message: String,
+        channel_id: u64,
+        guild_id: u64,
+        message_id: u64,
+    },
+    Hangman {
+        user_id: u64,
+        message: String,
+        channel_id: u64,
+        guild_id: u64,
+        message_id: u64,
+    },
+    Tictactoe {
+        user_id: u64,
+        message: String,
+        channel_id: u64,
+        guild_id: u64,
+        message_id: u64,
+    },
 }

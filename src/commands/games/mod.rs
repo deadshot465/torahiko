@@ -5,9 +5,7 @@ use serenity::{model::prelude::*, prelude::*};
 use std::sync::Arc;
 
 mod hangman;
-
-/// K: Channel ID, V: A vector of user IDs who are having games in that channel.
-pub static ONGOING_GAMES: OnceCell<Arc<DashMap<u64, Vec<u64>>>> = OnceCell::new();
+pub use hangman::handle_hangman;
 
 pub async fn games(
     client: &reqwest::Client,

@@ -1,7 +1,7 @@
 use crate::commands::*;
 use once_cell::sync::OnceCell;
 use rand::prelude::*;
-use serenity::model::prelude::{Activity, Interaction, Ready};
+use serenity::model::prelude::{Activity, Interaction, Message, Ready};
 use serenity::{async_trait, prelude::*};
 use tokio::time::Duration;
 
@@ -31,7 +31,21 @@ impl Handler {
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn ready(&self, ctx: Context, _data_about_bot: Ready) {
+    async fn message(&self, ctx: Context, new_message: Message) {
+        let client = HTTP_CLIENT.get().expect("Failed to get http client.");
+
+        // Handles hangman
+        handle_hangman(client, &ctx, &new_message)
+            .await
+            .expect("Failed to send message to hangman handler.");
+    }
+
+    async fn ready(&self, ctx: Context, data_about_bot: Ready) {
+        log::info!(
+            "{}#{} is now online.",
+            &data_about_bot.user.name,
+            data_about_bot.user.discriminator
+        );
         let presences = PRESENCES.get_or_init(|| {
             let raw_data =
                 std::fs::read(PRESENCES_PATH).expect("Failed to read presences from JSON.");
@@ -96,7 +110,7 @@ impl EventHandler for Handler {
                     if let Some(option_data) = data.options.get(0) {
                         enlarge(client, response_url, option_data, app_info.id.0, token)
                             .await
-                            .expect("Failed to respond to /avatar command.");
+                            .expect("Failed to respond to /enlarge command.");
                     }
                 }
                 "games" => {
