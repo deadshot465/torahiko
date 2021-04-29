@@ -64,7 +64,7 @@ pub async fn handle_hangman(
     message: &Message,
 ) -> anyhow::Result<()> {
     let ongoing_games = ONGOING_GAMES.get_or_init(|| Arc::new(DashMap::new()));
-    let mut game_stale = false;
+    let mut game_status = GameStatus::InProgress;
     if let Some(gaming_members) = ongoing_games.get(&message.channel_id.0) {
         if gaming_members.contains(&message.author.id.0) {
             let request_data = GameProgressRequest::Hangman {
@@ -80,20 +80,22 @@ pub async fn handle_hangman(
                 .json(&request_data)
                 .send()
                 .await?;
-            let game_status: GameProgressResponse = response.json().await?;
-            game_stale = match game_status.status {
-                GameStatus::InProgress => false,
-                GameStatus::Stale => true,
-            };
+            let game_progress_response: GameProgressResponse = response.json().await?;
+            game_status = game_progress_response.status;
         }
     }
 
-    if game_stale {
-        if let Some(mut gaming_members) = ongoing_games.get_mut(&message.channel_id.0) {
-            gaming_members.retain(|id| *id != message.author.id.0);
-            message
-                .reply(&ctx.http, "Game is stale and cancelled.")
-                .await?;
+    match game_status {
+        GameStatus::InProgress => {}
+        GameStatus::Stale | GameStatus::End => {
+            if let Some(mut gaming_members) = ongoing_games.get_mut(&message.channel_id.0) {
+                gaming_members.retain(|id| *id != message.author.id.0);
+                if game_status == GameStatus::Stale {
+                    message
+                        .reply(&ctx.http, "Game is stale and cancelled.")
+                        .await?;
+                }
+            }
         }
     }
 

@@ -17,10 +17,11 @@ pub struct GameRequestUser {
     pub avatar_url: String,
 }
 
-#[derive(Deserialize, Serialize, Debug, Copy, Clone)]
+#[derive(Deserialize, Serialize, Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub enum GameStatus {
     InProgress,
     Stale,
+    End,
 }
 
 #[derive(Deserialize, Serialize, Debug, Copy, Clone)]
